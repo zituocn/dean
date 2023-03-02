@@ -43,11 +43,11 @@ func (j *Job) SetData(ds DataSet) *Job {
 // Do 开始执行作业
 func (j *Job) Do() {
 	if len(j.Tasks) == 0 {
-		logx.Errorf("没有待执行的任务")
+		logx.Error("没有待执行的任务")
 		return
 	}
 	if j.ds == nil || len(j.ds) == 0 {
-		logx.Errorf("没有待处理的数据")
+		logx.Error("没有待处理的数据")
 		return
 	}
 	for _, task := range j.Tasks {
