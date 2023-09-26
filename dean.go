@@ -10,16 +10,16 @@ type Job struct {
 	// Tasks 多个等待处理的任务
 	Tasks []ITask
 
-	// ds 二维表数据
-	ds DataSet
+	// dm 以key命令的二维表数据map
+	dm map[string]DataSet
 }
 
 // NewJob 返回Job实例
 //	载入初始数据
 //	须将待处理的数据，转换成DataSet
-func NewJob(ds DataSet) *Job {
+func NewJob(dm DataMap) *Job {
 	return &Job{
-		ds: ds,
+		dm: dm,
 	}
 }
 
@@ -30,13 +30,13 @@ func (j *Job) AddTask(task ITask) *Job {
 }
 
 // GetData 返回job上的DataSet
-func (j *Job) GetData() DataSet {
-	return j.ds
+func (j *Job) GetData() DataMap {
+	return j.dm
 }
 
 // SetData 设置job上的DataSet
-func (j *Job) SetData(ds DataSet) *Job {
-	j.ds = ds
+func (j *Job) SetData(dm DataMap) *Job {
+	j.dm = dm
 	return j
 }
 
@@ -46,7 +46,7 @@ func (j *Job) Do() {
 		logx.Error("没有待执行的任务")
 		return
 	}
-	if j.ds == nil || len(j.ds) == 0 {
+	if j.dm == nil || len(j.dm) == 0 {
 		logx.Error("没有待处理的数据")
 		return
 	}
@@ -56,7 +56,7 @@ func (j *Job) Do() {
 		logx.Infof("[%s] -> beginning", name)
 
 		// 载入数据到任务实例
-		task.LoadData(j.ds)
+		task.LoadData(j.dm)
 
 		// 处理数据
 		err := task.Process()
@@ -65,7 +65,7 @@ func (j *Job) Do() {
 		}
 
 		// 返回处理后的数据到作业ds
-		j.ds = task.Result()
+		j.dm = task.Result()
 
 		logx.Infof("[%s] -> finished", name)
 
